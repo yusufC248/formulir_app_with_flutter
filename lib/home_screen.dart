@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:formulir_app_with_flutter/custom_dialog.dart';
+import 'package:formulir_app_with_flutter/datepicker_widget.dart';
 import 'package:formulir_app_with_flutter/saved_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,10 +18,64 @@ class _HomeScreenState extends State<HomeScreen> {
   bool baca = false;
   bool renang = false;
   bool game = false;
-
-
+  String tanggal = "";
+  String waktu = "";
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+  DateTime _date = DateTime(2021, 09, 12);
+
+  void _selectDate() async {
+    final DateTime newDate = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2017, 1),
+      lastDate: DateTime(2022, 7),
+      helpText: 'Select a date',
+    );
+    if (newDate != null) {
+      setState(() {
+        _date = newDate;
+      });
+    }
+  }
+
+  void _selectTime() async {
+    final TimeOfDay newTime = await showTimePicker(
+      context: context,
+      initialTime: _time,
+    );
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+      });
+    }
+  }
+
+  String validateEmail(String value) {
+    Pattern pattern =
+        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+        r"{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]"
+        r"{0,253}[a-zA-Z0-9])?)*$";
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value) || value == null)
+      return 'harap masukan Email yang valid';
+    else
+      return null;
+  }
+
+  String validateMobile(String value) {
+    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+    RegExp regExp = new RegExp(patttern);
+    if (value.length == 0) {
+      return 'Nomor Telepon tidak boleh kosong';
+    }
+    else if (!regExp.hasMatch(value)) {
+      return 'Harap masukan nomor telepon dengan benar';
+    }
+    return null;
+  }
 
   Widget _buildNama(){
     return Padding(
@@ -31,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
             labelText: 'Nama',
             border: OutlineInputBorder(),
         ),
+        autofocus: true,
         validator: (String value){
           if(value.isEmpty){
             return 'Nama tidak boleh kosong';
@@ -73,11 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
           border: OutlineInputBorder(),
         ),
         keyboardType: TextInputType.phone,
-        validator: (String value){
-          if(value.isEmpty){
-            return 'Nomor telepon tidak boleh kosong';
-          }
-        },
+        validator: validateMobile,
         onSaved: (String value){
           _notelp = value;
         },
@@ -94,11 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
           border: OutlineInputBorder(),
         ),
         keyboardType: TextInputType.emailAddress,
-        validator: (String value){
-          if(value.isEmpty){
-            return 'Email tidak boleh kosong';
-          }
-        },
+        validator: validateEmail,
         onSaved: (String value){
           _email = value;
         },
@@ -202,6 +249,38 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildTimePicker(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Selected time: ${_time.format(context)}',
+        ),
+        SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: _selectTime,
+          child: Text('SELECT TIME'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePicker(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '$_date',
+        ),
+        SizedBox(height: 8),
+        ElevatedButton(
+          onPressed: _selectDate,
+          child: Text('SELECT DATE'),
+        ),
+      ],
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +303,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildnotelp(),
                   _buildGender(),
                   _buildHobi(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      _buildTimePicker(),
+                      _buildDatePicker(),
+                    ],
+                  ),
                   SizedBox(
                     height: 90,
                   ),
@@ -239,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             (renang ? 'Berenang, ' : '') +
                             ( game ? 'Bermain games' : '');
 
+
                         // Navigator.push(context,
                         //     MaterialPageRoute(builder: (context) => SavedScreen(_nama, _alamat, _email, _notelp, _jk, _hobi))
                         // );
@@ -251,6 +338,8 @@ class _HomeScreenState extends State<HomeScreen> {
                            notelp: _notelp,
                            jk: _jk,
                            hobi: _hobi,
+                           tanggal : _date.toString(),
+                           waktu : _time.format(context),
                          );
                        });
                       },

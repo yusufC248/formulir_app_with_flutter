@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 
 class CustomDialog extends StatefulWidget {
-  final String nama, alamat, email, notelp, jk, hobi;
+  final String nama, alamat, email, notelp, jk, hobi, tanggal, waktu;
 
-  const CustomDialog({Key key, this.nama, this.alamat, this.email, this.notelp, this.jk, this.hobi}) : super(key: key);
+  const CustomDialog({Key key, this.nama, this.alamat, this.email, this.notelp, this.jk, this.hobi, this.tanggal, this.waktu}) : super(key: key);
 
 
 
@@ -57,6 +57,10 @@ class _CustomDialogState extends State<CustomDialog> {
               Text("Jenis Kelamin : "+widget.jk,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
               SizedBox(height: 15,),
               Text("Hobi : "+widget.hobi,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+              SizedBox(height: 15,),
+              Text("Tanggal : "+widget.tanggal,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
+              SizedBox(height: 15,),
+              Text("Waktu : "+widget.waktu,style: TextStyle(fontSize: 14,fontWeight: FontWeight.w600),),
               SizedBox(height: 22,),
               Align(
                 alignment: Alignment.bottomRight,
